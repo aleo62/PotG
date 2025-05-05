@@ -3,6 +3,15 @@ const path = require("path");
 const fs = require("fs");
 const app = express();
 const port = 8000;
+const cors = require("cors");
+
+app.use(
+    cors({
+        origin: "*",
+        methods: ["GET", "POST", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type"],
+    })
+);
 
 // Middleware to parse JSON
 app.use(express.json());
