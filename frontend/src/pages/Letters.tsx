@@ -1,3 +1,5 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
 import cartaamarela from "../assets/images/cartaamarela.png";
 import rabisco from "../assets/images/rasbisco.png";
 import { Background } from "../components/Background";
@@ -6,28 +8,42 @@ import { Letter } from "../components/Letter";
 import type { LetterType } from "../utils/type/LetterType";
 
 export default function Letters({ admin }: { admin: boolean }) {
-    
+    const [letters, setLetters] = useState<LetterType[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
     const deleteLetter = (id: string) => {
         if (admin) {
-            const letters: LetterType[] = JSON.parse(
-                localStorage.getItem("letters") || "[]"
-            );
-            const updatedLetters = letters.filter((letter) => letter.id !== id);
-            localStorage.setItem("letters", JSON.stringify(updatedLetters));
-            window.location.reload(); // ou use estado pra atualizar a tela sem recarregar
+            axios.delete(`https://potg-ldpv.onrender.com/${id}`).then(() => {
+                setLetters(letters.filter((letter) => letter.id !== id));
+            });
         }
     };
 
-    const letters: LetterType[] = JSON.parse(
-        localStorage.getItem("letters") || "[]"
-    );
+    useEffect(() => {
+        axios
+            .get("https://potg-ldpv.onrender.com/")
+            .then((response) => {
+                setLetters(response.data.letters);
+            })
+            .catch((error) => {
+                console.error("Erro ao buscar dados:", error);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            })
+    }, []);
+
 
     return (
         <>
             <Background />
             <Header />
 
-            {letters.length > 0 ? (
+            {isLoading ? (
+                <div className="flex items-center justify-center mt-20">
+                    <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-zinc-900"></div>
+                </div>
+            ) : letters.length > 0 ? (
                 <>
                     <h1 className="text-center text-6xl font-bold tracking-tighter text-zinc-900 drop-shadow-sm">
                         <span className="tracking-widest">Cartas</span>

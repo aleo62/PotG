@@ -33,9 +33,6 @@ export default function Home() {
 
             axios
                 .post("https://potg-ldpv.onrender.com/", newLetter)
-                .then((response) => {
-                    console.log("Enviado com sucesso:", response.data);
-                })
                 .catch((error) => {
                     console.error("Erro ao enviar:", error);
                 });
