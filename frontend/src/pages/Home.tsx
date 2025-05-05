@@ -7,7 +7,6 @@ import cartaroxa from "../assets/images/cartaroxa.png";
 import rabisco from "../assets/images/rasbisco.png";
 import { Background } from "../components/Background";
 import { Header } from "../components/Header";
-import { preventableWord } from "../utils/badwordsfilter/preventBadWords";
 import type { LetterType } from "../utils/type/LetterType";
 
 export default function Home() {
