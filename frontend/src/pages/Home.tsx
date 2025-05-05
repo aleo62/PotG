@@ -1,3 +1,4 @@
+import axios from "axios";
 import confetti from "canvas-confetti";
 import { useState } from "react";
 import Swal from "sweetalert2";
@@ -6,8 +7,8 @@ import cartaroxa from "../assets/images/cartaroxa.png";
 import rabisco from "../assets/images/rasbisco.png";
 import { Background } from "../components/Background";
 import { Header } from "../components/Header";
-import type { LetterType } from "../utils/type/LetterType";
 import { preventableWord } from "../utils/badwordsfilter/preventBadWords";
+import type { LetterType } from "../utils/type/LetterType";
 
 export default function Home() {
     const [value, setValue] = useState("");
@@ -17,20 +18,9 @@ export default function Home() {
 
         if (value.trim() === "") return;
 
-        if (!preventableWord(value)) {
-            Swal.fire({
-                title: "Erro",
-                text: "Não é permitido enviar palavras ofensivas.",
-                icon: "error",
-            });
-            return;
-        }
+        console.log("aasdasdasd")
 
         try {
-            const saved: LetterType[] = JSON.parse(
-                localStorage.getItem("letters") || "[]"
-            );
-
             const now = new Date();
             const newId = `letter-${now.toISOString()}`;
 
@@ -40,8 +30,16 @@ export default function Home() {
                 body: value.trim(),
             };
 
-            saved.push(newLetter);
-            localStorage.setItem("letters", JSON.stringify(saved));
+            console.log(newLetter);
+
+            axios
+                .post("https://potg-ldpv.onrender.com/", newLetter)
+                .then((response) => {
+                    console.log("Enviado com sucesso:", response.data);
+                })
+                .catch((error) => {
+                    console.error("Erro ao enviar:", error);
+                });
 
             confetti({
                 particleCount: 150,
