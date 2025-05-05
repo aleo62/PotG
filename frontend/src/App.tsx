@@ -14,12 +14,14 @@ function App() {
         setAdmin(!admin);
     });
     return (
+        <>
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/letters" element={<Letters admin={admin} />} />
             </Routes>
         </BrowserRouter>
+        </>
     );
 }
 

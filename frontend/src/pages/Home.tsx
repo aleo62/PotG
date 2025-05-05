@@ -7,7 +7,7 @@ import rabisco from "../assets/images/rasbisco.png";
 import { Background } from "../components/Background";
 import { Header } from "../components/Header";
 import type { LetterType } from "../utils/type/LetterType";
-
+import { preventableWord } from "../utils/badwordsfilter/preventBadWords";
 
 export default function Home() {
     const [value, setValue] = useState("");
@@ -16,6 +16,15 @@ export default function Home() {
         e.preventDefault();
 
         if (value.trim() === "") return;
+
+        if (!preventableWord(value)) {
+            Swal.fire({
+                title: "Erro",
+                text: "Não é permitido enviar palavras ofensivas.",
+                icon: "error",
+            });
+            return;
+        }
 
         try {
             const saved: LetterType[] = JSON.parse(
