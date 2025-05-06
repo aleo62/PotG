@@ -4,7 +4,7 @@ PotG is a simple web application where users can anonymously share messages of g
 
 ## 🌐 Live Demo
 
-> [PotG](https://potg-zeta.vercel.app/letters)
+> [PotG](https://potg-zeta.vercel.app)
 
 ---
 
