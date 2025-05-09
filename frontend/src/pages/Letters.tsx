@@ -1,15 +1,46 @@
+// src/pages/Letters.tsx
 import axios from "axios";
 import { useEffect, useState } from "react";
-import cartaamarela from "../assets/images/cartaamarela.png";
+import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket";
 import rabisco from "../assets/images/rasbisco.png";
 import { Background } from "../components/Background";
 import { Header } from "../components/Header";
 import { Letter } from "../components/Letter";
-import type { LetterType } from "../utils/type/LetterType";
+import type { LetterType, WebSocketMessage } from "../utils/type/LetterType";
 
 export default function Letters({ admin }: { admin: boolean }) {
     const [letters, setLetters] = useState<LetterType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    // WebSocket setup
+    const { lastJsonMessage } = useWebSocket("ws://localhost:8000/", {
+        onOpen: () => console.log("Conectado ao WebSocket"),
+        onError: (event) => {
+            console.error("Erro de WebSocket:", event);
+        },
+        shouldReconnect: () => true,
+        reconnectInterval: 3000,
+    });
+
+    useEffect(() => {
+        if (lastJsonMessage) {
+            const message = lastJsonMessage as WebSocketMessage;
+            if (Array.isArray(message)) {
+                // Initial state or full update
+                setLetters(message);
+            } else if (message.type === "new_letter") {
+                // New letter received
+                setLetters((prevLetters) => [...prevLetters, message.letter]);
+            } else if (message.type === "delete_letter") {
+                // Letter deleted
+                setLetters((prevLetters) =>
+                    prevLetters.filter((letter) => letter.id !== message.id)
+                );
+            }
+            setIsLoading(false);
+            console.log("Mensagem recebida:", message);
+        }
+    }, [lastJsonMessage, setLetters]);
 
     const deleteLetter = (id: string) => {
         if (admin) {
@@ -18,21 +49,6 @@ export default function Letters({ admin }: { admin: boolean }) {
             });
         }
     };
-
-    useEffect(() => {
-        axios
-            .get("https://potg-ldpv.onrender.com/")
-            .then((response) => {
-                setLetters(response.data.letters);
-            })
-            .catch((error) => {
-                console.error("Erro ao buscar dados:", error);
-            })
-            .finally(() => {
-                setIsLoading(false);
-            })
-    }, []);
-
 
     return (
         <>
@@ -83,19 +99,6 @@ export default function Letters({ admin }: { admin: boolean }) {
                     <img src={rabisco} alt="Rabisco" width={300} />
                 </div>
             )}
-
-            <div className="fixed bottom-5 left-10 flex items-center justify-center gap-4">
-                <a href="/">
-                    <button className="group relative flex cursor-pointer items-center gap-2 rounded-md bg-zinc-900 px-4 py-2 text-xl text-white shadow-md transition-all duration-300 hover:shadow-xl">
-                        Criar minha carta
-                        <img
-                            src={cartaamarela}
-                            alt="Carta amarela"
-                            className="absolute top-0 right-[-25px] w-10 rotate-25 drop-shadow-md transition-all duration-600 group-hover:top-[20px] group-hover:right-[200px] group-hover:-rotate-925"
-                        />
-                    </button>
-                </a>
-            </div>
         </>
     );
 }

@@ -18,7 +18,10 @@ export const Letter = ({ body, id, onDoubleClick }: LetterType) => {
                     {body}
                 </p>
 
-                <p className="text-sm text-gray-500 mt-3 mr-1 self-end"><span className="font-bold">Enviado em:</span> {formattedDate}</p>
+                <p className="text-sm text-gray-500 mt-3 mr-1 self-end">
+                    <span className="font-bold">Enviado em:</span>{" "}
+                    {formattedDate}
+                </p>
             </div>
         </div>
     );

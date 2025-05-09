@@ -1,6 +1,7 @@
+// src/pages/Home.tsx
+import React, { useState } from "react";
 import axios from "axios";
 import confetti from "canvas-confetti";
-import { useState } from "react";
 import Swal from "sweetalert2";
 import IconArrowRight from "../assets/icons/arrow-right.svg";
 import cartaroxa from "../assets/images/cartaroxa.png";
@@ -17,25 +18,18 @@ export default function Home() {
 
         if (value.trim() === "") return;
 
-        console.log("aasdasdasd")
-
         try {
             const now = new Date();
             const newId = `letter-${now.toISOString()}`;
-
-            console.log(newId);
             const newLetter: LetterType = {
                 id: newId,
                 body: value.trim(),
             };
 
-            console.log(newLetter);
-
-            axios
-                .post("https://potg-ldpv.onrender.com/", newLetter)
-                .catch((error) => {
-                    console.error("Erro ao enviar:", error);
-                });
+            // Envia a carta para o backend
+            axios.post("http://localhost:8000", newLetter).catch((error) => {
+                console.error("Erro ao enviar:", error);
+            });
 
             confetti({
                 particleCount: 150,
