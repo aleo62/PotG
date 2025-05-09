@@ -1,7 +1,7 @@
-// src/pages/Letters.tsx
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket";
+import cartaamarela from "../assets/images/cartaamarela.png";
 import rabisco from "../assets/images/rasbisco.png";
 import { Background } from "../components/Background";
 import { Header } from "../components/Header";
@@ -12,8 +12,17 @@ export default function Letters({ admin }: { admin: boolean }) {
     const [letters, setLetters] = useState<LetterType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    // FUNCTION PARA
+    const deleteLetter = (id: string) => {
+        if (admin) {
+            axios.delete(`https://potg-ldpv.onrender.com/${id}`).then(() => {
+                setLetters(letters.filter((letter) => letter.id !== id));
+            });
+        }
+    };
+
     // WebSocket setup
-    const { lastJsonMessage } = useWebSocket("ws://localhost:8000/", {
+    const { lastJsonMessage } = useWebSocket("wss://potg-ldpv.onrender.com/", {
         onOpen: () => console.log("Conectado ao WebSocket"),
         onError: (event) => {
             console.error("Erro de WebSocket:", event);
@@ -41,14 +50,6 @@ export default function Letters({ admin }: { admin: boolean }) {
             console.log("Mensagem recebida:", message);
         }
     }, [lastJsonMessage, setLetters]);
-
-    const deleteLetter = (id: string) => {
-        if (admin) {
-            axios.delete(`https://potg-ldpv.onrender.com/${id}`).then(() => {
-                setLetters(letters.filter((letter) => letter.id !== id));
-            });
-        }
-    };
 
     return (
         <>
@@ -99,6 +100,19 @@ export default function Letters({ admin }: { admin: boolean }) {
                     <img src={rabisco} alt="Rabisco" width={300} />
                 </div>
             )}
+
+            <div className="fixed bottom-5 left-10 flex items-center justify-center gap-4">
+                <a href="/">
+                    <button className="group relative flex cursor-pointer items-center gap-2 rounded-md bg-zinc-900 px-4 py-2 text-xl text-white shadow-md transition-all duration-300 hover:shadow-xl">
+                        Criar minha carta
+                        <img
+                            src={cartaamarela}
+                            alt="Carta amarela"
+                            className="absolute top-0 right-[-25px] w-10 rotate-25 drop-shadow-md transition-all duration-600 group-hover:top-[20px] group-hover:right-[200px] group-hover:-rotate-925"
+                        />
+                    </button>
+                </a>
+            </div>
         </>
     );
 }

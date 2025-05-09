@@ -27,9 +27,11 @@ export default function Home() {
             };
 
             // Envia a carta para o backend
-            axios.post("http://localhost:8000", newLetter).catch((error) => {
-                console.error("Erro ao enviar:", error);
-            });
+            axios
+                .post("https://potg-ldpv.onrender.com/", newLetter)
+                .catch((error) => {
+                    console.error("Erro ao enviar:", error);
+                });
 
             confetti({
                 particleCount: 150,
